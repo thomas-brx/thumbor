@@ -1,0 +1,2 @@
+# thumbor
+Dockerized Thumbor
