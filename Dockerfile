@@ -1,7 +1,7 @@
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.9
 FROM python:${PYTHON_VERSION}-bullseye AS builder-image
 
-ARG THUMBOR_VERSION
+ARG THUMBOR_VERSION=7.4.6
 
 # base OS packages
 RUN  \
@@ -40,9 +40,9 @@ RUN pip3 install --no-cache-dir wheel && \
     pip3 install --no-cache-dir -r requirements.txt && \
     pip3 install --no-cache-dir thumbor==${THUMBOR_VERSION}
 
-RUN pip install --no-cache-dir git+https://github.com/thomas-brx/thumbor-imgix-compat.git@regex-config
 
-RUN cd /home/thumbor/venv/lib/python3.9/site-packages; curl https://patch-diff.githubusercontent.com/raw/thumbor/thumbor/pull/1548.diff | patch -p1
+COPY patches/ .
+RUN cd /home/thumbor/venv/lib/python3.9/site-packages; for patch in /app/*.diff; do patch -p1 < "$patch"; done
 
 FROM python:${PYTHON_VERSION}-slim-bullseye AS runner-image
 
@@ -66,8 +66,13 @@ ENV PYTHONUNBUFFERED=1
 
 ENV VIRTUAL_ENV=/home/thumbor/venv
 ENV PATH="/home/thumbor/venv/bin:$PATH"
+ENV PYTHONPATH="/home/thumbor/python-packages"
+WORKDIR /home/thumbor
 
 COPY conf/thumbor.conf.tpl /home/thumbor/thumbor.conf.tpl
+COPY 404.png /data/loader/
+COPY plugins/fallback_loader/ python-packages/fallback_loader/
+COPY plugins/thumbor_imgix_compat/ python-packages/thumbor_imgix_compat/
 
 COPY docker-entrypoint.sh /
 CMD ["thumbor"]

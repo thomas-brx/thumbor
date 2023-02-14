@@ -20,8 +20,8 @@ if [ -z ${THUMBOR_NUM_PROCESSES+x} ]; then
 fi
 
 if [ "$1" = 'thumbor' ]; then
-    echo "---> Starting thumbor solo..."
-    exec thumbor --port=$THUMBOR_PORT --conf=/home/thumbor/thumbor.conf $LOG_PARAMETERS --processes=$THUMBOR_NUM_PROCESSES --log-level=debug --app tc_core.app.App
+    echo "---> Starting thumbor"
+    exec thumbor --port=$THUMBOR_PORT --conf=/home/thumbor/thumbor.conf $LOG_PARAMETERS --processes=$THUMBOR_NUM_PROCESSES --app tc_core.app.App
 fi
 
 exec "$@"

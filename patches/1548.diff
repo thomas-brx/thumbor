@@ -1,0 +1,14 @@
+diff --git a/thumbor/handlers/__init__.py b/thumbor/handlers/__init__.py
+index 7240705e6..c60377ae1 100644
+--- a/thumbor/handlers/__init__.py
++++ b/thumbor/handlers/__init__.py
+@@ -285,6 +285,9 @@ async def get_image(self):
+ 
+                 return
+ 
++            if not normalized:
++                normalized = self.context.request.engine.normalize()
++
+         self.context.transformer = Transformer(self.context)
+ 
+         await self.filters_runner.apply_filters(

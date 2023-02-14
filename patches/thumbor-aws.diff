@@ -1,0 +1,20 @@
+diff --git a/thumbor_aws/loader.py b/thumbor_aws/loader.py
+index f7a8b19..6df3744 100755
+--- a/thumbor_aws/loader.py
++++ b/thumbor_aws/loader.py
+@@ -9,6 +9,7 @@
+ # Copyright (c) 2011 globo.com thumbor@googlegroups.com
+
+
++from urllib.parse import unquote
+ from thumbor.loaders import LoaderResult
+
+ from thumbor_aws.config import Config
+@@ -120,6 +121,7 @@ def get_bucket_and_path(configured_bucket: str, path: str) -> (str, str):
+
+ def normalize_url(prefix: str, path: str) -> str:
+     """Function to normalize URLs before reaching into S3"""
++    path = unquote(path).lstrip("/")
+     if prefix:
+         return f"{prefix.rstrip('/')}/{path.lstrip('/')}"
+     return path
